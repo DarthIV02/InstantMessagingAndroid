@@ -3,6 +3,7 @@ package com.example.logintest.message;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.media.Image;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -60,6 +61,7 @@ public class MessageActivity extends AppCompatActivity {
 
         TextView userName = new TextView(MessageActivity.this);
         userName.setText(user.getDisplayName());
+        userName.setTypeface(Typeface.DEFAULT_BOLD);
         text.addView(userName);
         TextView textMessage = new TextView(MessageActivity.this);
         textMessage.setText(message);
