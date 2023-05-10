@@ -6,8 +6,10 @@ import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.media.Image;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.logintest.data.model.LoggedInUser;
@@ -26,21 +28,113 @@ public class MessageActivity extends AppCompatActivity {
         binding = ActivityMessageBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // MESSAGES ADDED WITH FIREBASE START
+
         User user1 = new User("1", "Ivan", getResources().getIdentifier("ic_user1",
                 "drawable", getPackageName()));
 
         User user2 = new User("2", "Ivannia", getResources().getIdentifier("ic_user2",
                 "drawable", getPackageName()));
 
-        LinearLayout newMessage1 = createNewMessageDisplay(user1, "This is Ivan's my test message just like I was saying this is a really" +
+        LinearLayout newMessage1;
+        LinearLayout newMessage;
+
+        newMessage1 = createNewMessageDisplay(user1, "This is Ivan's my test message just like I was saying this is a really" +
                 "long text message that should write at leat 2 sentences");
 
         binding.linearLayoutFull.addView(newMessage1);
 
-        LinearLayout newMessage = createNewMessageDisplay(user2, "This is Ivannia's my test message just like I was saying this is a really" +
+        newMessage = createNewMessageDisplay(user2, "This is Ivannia's my test message just like I was saying this is a really" +
                 "long text message that should write at leat 2 sentences");
 
         binding.linearLayoutFull.addView(newMessage);
+
+        newMessage1 = createNewMessageDisplay(user1, "This is Ivan's my test message just like I was saying this is a really" +
+                "long text message that should write at leat 2 sentences");
+
+        binding.linearLayoutFull.addView(newMessage1);
+
+        newMessage = createNewMessageDisplay(user2, "This is Ivannia's my test message just like I was saying this is a really" +
+                "long text message that should write at leat 2 sentences");
+
+        binding.linearLayoutFull.addView(newMessage);
+
+        newMessage1 = createNewMessageDisplay(user1, "This is Ivan's my test message just like I was saying this is a really" +
+                "long text message that should write at leat 2 sentences");
+
+        binding.linearLayoutFull.addView(newMessage1);
+
+        newMessage = createNewMessageDisplay(user2, "This is Ivannia's my test message just like I was saying this is a really" +
+                "long text message that should write at leat 2 sentences");
+
+        binding.linearLayoutFull.addView(newMessage);
+
+        newMessage1 = createNewMessageDisplay(user1, "This is Ivan's my test message just like I was saying this is a really" +
+                "long text message that should write at leat 2 sentences");
+
+        binding.linearLayoutFull.addView(newMessage1);
+
+        newMessage = createNewMessageDisplay(user2, "This is Ivannia's my test message just like I was saying this is a really" +
+                "long text message that should write at leat 2 sentences");
+
+        binding.linearLayoutFull.addView(newMessage);
+
+        newMessage1 = createNewMessageDisplay(user1, "This is Ivan's my test message just like I was saying this is a really" +
+                "long text message that should write at leat 2 sentences");
+
+        binding.linearLayoutFull.addView(newMessage1);
+
+        newMessage = createNewMessageDisplay(user2, "This is Ivannia's my test message just like I was saying this is a really" +
+                "long text message that should write at leat 2 sentences");
+
+        binding.linearLayoutFull.addView(newMessage);
+
+        newMessage1 = createNewMessageDisplay(user1, "This is Ivan's my test message just like I was saying this is a really" +
+                "long text message that should write at leat 2 sentences");
+
+        binding.linearLayoutFull.addView(newMessage1);
+
+        newMessage = createNewMessageDisplay(user2, "This is Ivannia's my test message just like I was saying this is a really" +
+                "long text message that should write at leat 2 sentences");
+
+        binding.linearLayoutFull.addView(newMessage);
+
+        newMessage1 = createNewMessageDisplay(user1, "This is Ivan's my test message just like I was saying this is a really" +
+                "long text message that should write at leat 2 sentences");
+
+        binding.linearLayoutFull.addView(newMessage1);
+
+        newMessage = createNewMessageDisplay(user2, "This is the last message from me");
+
+        binding.linearLayoutFull.addView(newMessage);
+
+        // MESSAGES ADDED WITH FIREBASE END
+
+        ScrollView scrollview = ((ScrollView) binding.scrollView);
+        scrollview.post(new Runnable() { // Start at the bottom
+            @Override
+            public void run() {
+                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
+
+        binding.sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ScrollView scrollview = ((ScrollView) binding.scrollView);
+                scrollview.post(new Runnable() { // Start at the bottom
+                    @Override
+                    public void run() {
+                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+                    }
+                });
+
+                binding.inputEditText.setText("");
+
+                // TO DO: Send message to database and show message?
+            }
+        });
     }
 
     public LinearLayout createNewMessageDisplay(User user, String message){
