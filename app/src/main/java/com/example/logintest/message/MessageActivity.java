@@ -1,35 +1,30 @@
 package com.example.logintest.message;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.media.Image;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.logintest.data.model.LoggedInUser;
+import com.example.logintest.data.model.TextMessage;
 import com.example.logintest.data.model.User;
 import com.example.logintest.databinding.ActivityMessageBinding;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Iterator;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Map;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -44,7 +39,9 @@ public class MessageActivity extends AppCompatActivity {
     // Database Reference for Firebase.
     DatabaseReference databaseReference;
 
-    LinearLayout newMessage;
+    private Calendar calendar;
+    private SimpleDateFormat dateFormat;
+    private String date;
 
     final public String TAG = "IVANNIA DEBUGGING";
 
@@ -55,21 +52,12 @@ public class MessageActivity extends AppCompatActivity {
         binding = ActivityMessageBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        Log.v(TAG, FirebaseApp.getInstance().getOptions().getProjectId());
-
         // MESSAGES ADDED WITH FIREBASE START
 
-        // below line is used to get the instance
-        // of our Firebase database.
-        firebaseDatabase = FirebaseDatabase.getInstance();
-
-        // below line is used to get
-        // reference for our database.
-        databaseReference = firebaseDatabase.getReference("messages");
-
-        getdata();
+        initFirebase();
 
         // MESSAGES ADDED WITH FIREBASE END
+
 
         ScrollView scrollview = ((ScrollView) binding.scrollView);
         scrollview.post(new Runnable() { // Start at the bottom
@@ -91,9 +79,67 @@ public class MessageActivity extends AppCompatActivity {
                     }
                 });
 
-                binding.inputEditText.setText("");
+                String current_user = "Ivannia";
 
-                // TO DO: Send message to database and show message?
+                //String messageId = UUID.randomUUID().toString();
+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    calendar = Calendar.getInstance();
+                    dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    date = dateFormat.format(calendar.getTime());
+                    TextMessage message = new TextMessage(current_user,
+                            String.valueOf(binding.inputEditText.getText()),
+                            String.valueOf(date));
+                    String messageId = "m" + date;
+                    databaseReference.child("messages").child(messageId).setValue(message);
+                }
+
+                binding.inputEditText.setText(""); // Set input to nothing
+                scrollview.post(new Runnable() { // Start at the bottom
+                    @Override
+                    public void run() {
+                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+                    }
+                });
+
+                // TO DO: Bring down keyboard once the message is sent
+            }
+        });
+    }
+
+    private void initFirebase(){
+        FirebaseApp.initializeApp(MessageActivity.this);
+        firebaseDatabase = firebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference();
+        databaseReference.child("messages").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Map<String,Object> map = (Map<String,Object>) snapshot.getValue();
+                TextMessage newMessage = new TextMessage(String.valueOf(map.get("userName")),
+                        String.valueOf(map.get("text")), String.valueOf(map.get("date")));
+                binding.linearLayoutFull.addView(createNewMessageDisplay(
+                        newMessage.getUserName(),
+                        newMessage.getText()));
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
@@ -131,49 +177,5 @@ public class MessageActivity extends AppCompatActivity {
         box.addView(text);
 
         return box;
-    }
-
-    private void getdata() {
-
-        // calling add value event listener method
-        // for getting the values from database.
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // this method is call to get the realtime
-                // updates in the data.
-                // this method is called when the data is
-                // changed in our Firebase console.
-                // below line is for getting the data from
-                // snapshot of our database.
-                JSONObject messages = (JSONObject) snapshot.getValue(JSONObject.class);
-
-                Iterator< ? > keys = messages.keys();
-
-                while (keys.hasNext()) {
-                    String key = (String) keys.next();
-                    try {
-                        if (messages.get(key) instanceof JSONObject) {
-                            JSONObject message = (JSONObject) messages.get(key);
-                            String user_name = message.getString("name");
-                            String text = message.getString("text");
-
-                            newMessage = createNewMessageDisplay(user_name, text);
-
-                            binding.linearLayoutFull.addView(newMessage);
-                        }
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // calling on cancelled method when we receive
-                // any error or we are not able to get the data.
-                Toast.makeText(MessageActivity.this, "Fail to get data.", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }
