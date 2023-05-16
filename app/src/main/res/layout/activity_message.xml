@@ -45,7 +45,8 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:shadowColor="@color/teal_200"
-            app:icon="@drawable/ic_send" />
+            app:icon="@drawable/ic_send"
+            android:enabled="false"/>
 
     </RelativeLayout>
 
