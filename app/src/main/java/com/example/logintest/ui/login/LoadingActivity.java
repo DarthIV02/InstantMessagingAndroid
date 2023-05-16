@@ -46,6 +46,7 @@ public class LoadingActivity extends AppCompatActivity {
         {
             Intent intent = new Intent(LoadingActivity.this, LoginActivity.class);
             startActivity(intent);
+            finish();
         }
     }
 }

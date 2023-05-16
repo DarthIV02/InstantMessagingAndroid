@@ -16,7 +16,7 @@
         android:textColor="@color/black"/>
 
     <EditText
-        android:id="@+id/edit_text_name"
+        android:id="@+id/editTextName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/full_name"
@@ -26,7 +26,7 @@
         android:layout_marginBottom="16dp"/>
 
     <EditText
-        android:id="@+id/edit_text_email"
+        android:id="@+id/editTextEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/email_address"
@@ -36,7 +36,7 @@
         android:layout_marginBottom="16dp"/>
 
     <EditText
-        android:id="@+id/edit_text_password"
+        android:id="@+id/editTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/password"
@@ -46,7 +46,7 @@
         android:layout_marginBottom="16dp"/>
 
     <EditText
-        android:id="@+id/edit_text_confirm_password"
+        android:id="@+id/editTextConfirmPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/confirm_password"
@@ -57,7 +57,7 @@
 
 
     <Button
-        android:id="@+id/button_register"
+        android:id="@+id/buttonRegister"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/register"
