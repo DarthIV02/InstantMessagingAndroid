@@ -9,15 +9,20 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.example.logintest.ProfileActivity;
+import com.example.logintest.R;
 import com.example.logintest.data.model.TextMessage;
 import com.example.logintest.data.model.User;
 import com.example.logintest.databinding.ActivityMessageBinding;
+import com.example.logintest.ui.login.LoginActivity;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -48,6 +53,8 @@ public class MessageActivity extends AppCompatActivity {
 
     final public String TAG = "IVANNIA DEBUGGING";
 
+    String current_user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         scale = MessageActivity.this.getResources().getDisplayMetrics().density;
@@ -57,22 +64,13 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        String current_user = intent.getStringExtra("userName");
+        current_user = intent.getStringExtra("userName");
 
         // MESSAGES ADDED WITH FIREBASE START
 
         initFirebase();
 
         // MESSAGES ADDED WITH FIREBASE END
-
-
-        ScrollView scrollview = ((ScrollView) binding.scrollView);
-        scrollview.post(new Runnable() { // Start at the bottom
-            @Override
-            public void run() {
-                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-            }
-        });
 
         binding.inputEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -82,7 +80,8 @@ public class MessageActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.toString().trim().length()==0){
+                if(s.toString().trim().length()==0){ // Make sure button is enabled only when
+                                                     // there is text as input
                     binding.sendButton.setEnabled(false);
                 } else {
                     binding.sendButton.setEnabled(true);
@@ -99,16 +98,6 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                ScrollView scrollview = ((ScrollView) binding.scrollView);
-                scrollview.post(new Runnable() { // Start at the bottom
-                    @Override
-                    public void run() {
-                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-                    }
-                });
-
-                //String messageId = UUID.randomUUID().toString();
-
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                     calendar = Calendar.getInstance();
                     dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -121,16 +110,30 @@ public class MessageActivity extends AppCompatActivity {
                 }
 
                 binding.inputEditText.setText(""); // Set input to nothing
-                scrollview.post(new Runnable() { // Start at the bottom
-                    @Override
-                    public void run() {
-                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
-                    }
-                });
-
-                // TO DO: Bring down keyboard once the message is sent
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+
+        //menu item clicked handling
+
+        if(id == R.id.profile){
+            Intent intent = new Intent(MessageActivity.this, ProfileActivity.class);
+            intent.putExtra("userName", current_user);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void initFirebase(){
@@ -146,6 +149,15 @@ public class MessageActivity extends AppCompatActivity {
                 binding.linearLayoutFull.addView(createNewMessageDisplay(
                         newMessage.getUserName(),
                         newMessage.getText()));
+
+                ScrollView scrollview = ((ScrollView) binding.scrollView); // Go to bottom for
+                                                                           // every new message
+                scrollview.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+                    }
+                });
             }
 
             @Override

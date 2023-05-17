@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.logintest.R;
 import com.example.logintest.databinding.ActivityRegisterBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -61,6 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
                                     usersRef.child(uid).child("email").setValue(email);
                                     usersRef.child(uid).child("username").setValue(userName);
+
                                     Toast.makeText(RegisterActivity.this, "Register succesfull", Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(RegisterActivity.this, "fallooooooo", Toast.LENGTH_SHORT).show();

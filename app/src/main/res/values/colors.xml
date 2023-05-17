@@ -13,4 +13,5 @@
     <color name="light_purple_pressed">#9575CD</color>
     <color name="light_purple_focused">#B39DDB</color>
     <color name="light_gray">#BDBDBD</color>
+    <color name="user_color">#FF3700B3</color>
 </resources>
