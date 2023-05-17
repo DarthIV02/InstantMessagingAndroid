@@ -1,18 +1,15 @@
 package com.example.logintest.data.model;
 
-import android.graphics.drawable.Drawable;
-
-/**
- * Data class that captures user information for logged in users retrieved from LoginRepository
- */
-public class LoggedInUser {
-
+public class User {
     private String userId;
     private String displayName;
 
-    public LoggedInUser(String userId, String displayName) {
+    private int userIcon;
+
+    public User(String userId, String displayName, int userIcon) {
         this.userId = userId;
         this.displayName = displayName;
+        this.userIcon = userIcon;
     }
 
     public String getUserId() {
@@ -23,4 +20,5 @@ public class LoggedInUser {
         return displayName;
     }
 
+    public int getUserIcon(){ return userIcon; }
 }
