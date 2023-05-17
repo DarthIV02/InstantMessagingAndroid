@@ -1,62 +1,34 @@
 {
   "project_info": {
-    "project_number": "890404751009",
-    "project_id": "chatappuserauth",
-    "storage_bucket": "chatappuserauth.appspot.com"
+    "project_number": "359423278100",
+    "firebase_url": "https://instantmessaging2-e5486-default-rtdb.firebaseio.com",
+    "project_id": "instantmessaging2-e5486",
+    "storage_bucket": "instantmessaging2-e5486.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:890404751009:android:67a354d690020aba8fd2e0",
-        "android_client_info": {
-          "package_name": "com.android.application"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "890404751009-oq0mtg4t1kcrvqcc1vjdh41v7dsvvtlk.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBFH6QQrlDnCbexJy1OtZas2FB3aVk3iLc"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "890404751009-oq0mtg4t1kcrvqcc1vjdh41v7dsvvtlk.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:890404751009:android:bf7eeae4be11cbb38fd2e0",
+        "mobilesdk_app_id": "1:359423278100:android:c2f8823925c3b10a47fb01",
         "android_client_info": {
           "package_name": "com.example.logintest"
         }
       },
       "oauth_client": [
         {
-          "client_id": "890404751009-oq0mtg4t1kcrvqcc1vjdh41v7dsvvtlk.apps.googleusercontent.com",
+          "client_id": "359423278100-6l2f0edcbl1bhoj57pqfqs4fini7da04.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBFH6QQrlDnCbexJy1OtZas2FB3aVk3iLc"
+          "current_key": "AIzaSyB-nMT8hTPxO5LfOq_ZN9oetEOj0kxTv3w"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "890404751009-oq0mtg4t1kcrvqcc1vjdh41v7dsvvtlk.apps.googleusercontent.com",
+              "client_id": "359423278100-6l2f0edcbl1bhoj57pqfqs4fini7da04.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
