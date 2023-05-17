@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -21,12 +22,16 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.logintest.R;
+import com.example.logintest.data.model.User;
 import com.example.logintest.databinding.ActivityLoginBinding;
+import com.example.logintest.message.MessageActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
     private LoginViewModel loginViewModel;
     private ActivityLoginBinding binding;
+
+    final public String TAG = "IVANNIA DEBUGGING";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -116,9 +121,14 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                //loadingProgressBar.setVisibility(View.VISIBLE);
+                //loginViewModel.login(usernameEditText.getText().toString(),
+                        //passwordEditText.getText().toString());
+                // TO DO: Revisar que este en la base de datos antes de entrar
+                Log.v(TAG, binding.username.getText().toString());
+                Intent intent = new Intent(LoginActivity.this, MessageActivity.class);
+                intent.putExtra("userName", binding.username.getText().toString());
+                startActivity(intent);
             }
         });
         registerText.setOnClickListener(new View.OnClickListener() {

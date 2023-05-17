@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.Editable;
@@ -54,6 +55,10 @@ public class MessageActivity extends AppCompatActivity {
         binding = ActivityMessageBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        Intent intent = getIntent();
+
+        String current_user = intent.getStringExtra("userName");
+
         // MESSAGES ADDED WITH FIREBASE START
 
         initFirebase();
@@ -101,8 +106,6 @@ public class MessageActivity extends AppCompatActivity {
                         scrollview.fullScroll(ScrollView.FOCUS_DOWN);
                     }
                 });
-
-                String current_user = "Ivannia";
 
                 //String messageId = UUID.randomUUID().toString();
 
