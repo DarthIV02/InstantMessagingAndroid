@@ -1,22 +1,25 @@
 package com.example.logintest.data.model;
 
 public class TextMessage {
+    String userName;
+
     String userId;
     String text;
     String date;
 
-    public TextMessage(String uid, String text, String date) {
-        this.userId = uid;
+    public TextMessage(String userName, String userId, String text, String date) {
+        this.userName = userName;
+        this.userId = userId;
         this.text = text;
         this.date = date;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserName(String userId) {
+        this.userName = userName;
     }
 
     public String getText() {
@@ -33,5 +36,13 @@ public class TextMessage {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

@@ -18,10 +18,10 @@
         android:src="@drawable/ic_user1"/>
 
     <Button
-        android:id="@+id/changePictureButton"
+        android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Change Profile Picture"
+        android:text="Save Changes"
         />
 
 </LinearLayout>

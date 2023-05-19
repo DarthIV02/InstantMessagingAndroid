@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -17,12 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.logintest.R;
-import com.example.logintest.data.model.RandomColor;
 import com.example.logintest.databinding.ActivityRegisterBinding;
-import com.example.logintest.message.MessageActivity;
-import com.example.logintest.profile.ChangeProfilePictureActivity;
-import com.example.logintest.profile.ProfileActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,7 +30,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
 import java.util.Random;
-import java.util.UUID;
 
 public class RegisterActivity extends AppCompatActivity {
     ActivityRegisterBinding binding;
@@ -55,6 +48,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     FirebaseStorage storage;
     StorageReference storageReference;
+
+    StorageReference imageRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

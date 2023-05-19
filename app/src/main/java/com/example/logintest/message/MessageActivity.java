@@ -29,6 +29,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -50,6 +51,8 @@ public class MessageActivity extends AppCompatActivity {
     // Database Reference for Firebase.
     DatabaseReference databaseReference;
 
+    FirebaseStorage storage;
+
     StorageReference storageRef;
 
     private Calendar calendar;
@@ -59,6 +62,7 @@ public class MessageActivity extends AppCompatActivity {
     final public String TAG = "IVANNIA DEBUGGING";
 
     String current_user;
+    String current_id;
 
     private Menu menu;
 
@@ -73,7 +77,8 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        current_user = "VD0zJUxccHfkHmoGnLb606t0G2G3";
+        current_id = "RXSRUR0kLSONfAlW3hGrmeh7YEq1";
+        current_user = intent.getStringExtra("userName");
 
         // MESSAGES ADDED WITH FIREBASE START
 
@@ -111,7 +116,7 @@ public class MessageActivity extends AppCompatActivity {
                     calendar = Calendar.getInstance();
                     dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     date = dateFormat.format(calendar.getTime());
-                    TextMessage message = new TextMessage(current_user,
+                    TextMessage message = new TextMessage(current_user, current_id,
                             String.valueOf(binding.inputEditText.getText()),
                             String.valueOf(date));
                     String messageId = "m" + date;
@@ -138,7 +143,7 @@ public class MessageActivity extends AppCompatActivity {
 
         if(id == R.id.profile){
             Intent intent = new Intent(MessageActivity.this, ProfileActivity.class);
-            intent.putExtra("userName", current_user);
+            intent.putExtra("USERID", current_id);
             startActivity(intent);
         }
 
@@ -153,12 +158,14 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Map<String,Object> map = (Map<String,Object>) snapshot.getValue();
-                TextMessage newMessage = new TextMessage(String.valueOf(map.get("userId")),
+                TextMessage newMessage = new TextMessage(String.valueOf(map.get("userName")), String.valueOf(map.get("userId")),
                         String.valueOf(map.get("text")), String.valueOf(map.get("date")));
 
                 binding.linearLayoutFull.addView(createNewMessageDisplay(
+                        newMessage.getUserName(),
                         newMessage.getUserId(),
-                        newMessage.getText()));
+                        newMessage.getText())
+                );
 
                 ScrollView scrollview = ((ScrollView) binding.scrollView); // Go to bottom for
                                                                            // every new message
@@ -191,26 +198,11 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
     }
 
-    public LinearLayout createNewMessageDisplay(String user_name, String message){
-
-        DatabaseReference user = databaseReference.child("users").child(user_name).child("username");
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                user_message = dataSnapshot.child("users").child(user_name).child("username").getValue(String.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-            }
-        };
-        databaseReference.addValueEventListener(postListener);
+    public LinearLayout createNewMessageDisplay(String user_name, String uid, String message){
 
         LinearLayout box = new LinearLayout(MessageActivity.this);
         box.setOrientation(LinearLayout.HORIZONTAL);
@@ -220,9 +212,10 @@ public class MessageActivity extends AppCompatActivity {
         userImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
         userImage.getLayoutParams().height = (int) (50 * scale + 0.5f);
         userImage.getLayoutParams().width = (int) (50 * scale + 0.5f);
-        StorageReference userImageStorage = storageRef.child("usersImages").child(user_message);
 
-        GlideApp.with(this /* context */)
+        StorageReference userImageStorage = storageRef.child("usersImages").child(uid);
+
+        GlideApp.with(MessageActivity.this /* context */)
                 .load(userImageStorage)
                 .into(userImage);
         box.addView(userImage);
@@ -230,10 +223,11 @@ public class MessageActivity extends AppCompatActivity {
         LinearLayout text = new LinearLayout(MessageActivity.this);
         text.setOrientation(LinearLayout.VERTICAL);
         text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        text.setPadding((int) (10 * scale + 0.5f), 0, 0, 0);
 
         TextView userName = new TextView(MessageActivity.this);
 
-        userName.setText(user_message);
+        userName.setText(user_name);
         userName.setTypeface(Typeface.DEFAULT_BOLD);
         text.addView(userName);
         TextView textMessage = new TextView(MessageActivity.this);
