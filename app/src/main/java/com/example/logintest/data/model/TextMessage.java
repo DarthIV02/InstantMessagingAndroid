@@ -1,22 +1,22 @@
 package com.example.logintest.data.model;
 
 public class TextMessage {
-    String userName;
+    String userId;
     String text;
     String date;
 
-    public TextMessage(String user_name, String text, String date) {
-        this.userName = user_name;
+    public TextMessage(String uid, String text, String date) {
+        this.userId = uid;
         this.text = text;
         this.date = date;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getText() {

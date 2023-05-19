@@ -17,18 +17,21 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.example.logintest.ProfileActivity;
+import com.example.logintest.data.model.GlideApp;
+import com.example.logintest.profile.ProfileActivity;
 import com.example.logintest.R;
 import com.example.logintest.data.model.TextMessage;
 import com.example.logintest.data.model.User;
 import com.example.logintest.databinding.ActivityMessageBinding;
-import com.example.logintest.ui.login.LoginActivity;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -47,6 +50,8 @@ public class MessageActivity extends AppCompatActivity {
     // Database Reference for Firebase.
     DatabaseReference databaseReference;
 
+    StorageReference storageRef;
+
     private Calendar calendar;
     private SimpleDateFormat dateFormat;
     private String date;
@@ -54,6 +59,10 @@ public class MessageActivity extends AppCompatActivity {
     final public String TAG = "IVANNIA DEBUGGING";
 
     String current_user;
+
+    private Menu menu;
+
+    String user_message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +73,7 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        current_user = intent.getStringExtra("userName");
+        current_user = "VD0zJUxccHfkHmoGnLb606t0G2G3";
 
         // MESSAGES ADDED WITH FIREBASE START
 
@@ -144,10 +153,11 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Map<String,Object> map = (Map<String,Object>) snapshot.getValue();
-                TextMessage newMessage = new TextMessage(String.valueOf(map.get("userName")),
+                TextMessage newMessage = new TextMessage(String.valueOf(map.get("userId")),
                         String.valueOf(map.get("text")), String.valueOf(map.get("date")));
+
                 binding.linearLayoutFull.addView(createNewMessageDisplay(
-                        newMessage.getUserName(),
+                        newMessage.getUserId(),
                         newMessage.getText()));
 
                 ScrollView scrollview = ((ScrollView) binding.scrollView); // Go to bottom for
@@ -180,14 +190,27 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
     }
 
     public LinearLayout createNewMessageDisplay(String user_name, String message){
 
-        // TO DO: Change to make it dynamic
+        DatabaseReference user = databaseReference.child("users").child(user_name).child("username");
 
-        User user = new User("1", user_name, getResources().getIdentifier("ic_user1",
-                "drawable", getPackageName()));
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                user_message = dataSnapshot.child("users").child(user_name).child("username").getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+            }
+        };
+        databaseReference.addValueEventListener(postListener);
 
         LinearLayout box = new LinearLayout(MessageActivity.this);
         box.setOrientation(LinearLayout.HORIZONTAL);
@@ -197,7 +220,11 @@ public class MessageActivity extends AppCompatActivity {
         userImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
         userImage.getLayoutParams().height = (int) (50 * scale + 0.5f);
         userImage.getLayoutParams().width = (int) (50 * scale + 0.5f);
-        userImage.setImageResource(user.getUserIcon());
+        StorageReference userImageStorage = storageRef.child("usersImages").child(user_message);
+
+        GlideApp.with(this /* context */)
+                .load(userImageStorage)
+                .into(userImage);
         box.addView(userImage);
 
         LinearLayout text = new LinearLayout(MessageActivity.this);
@@ -205,7 +232,8 @@ public class MessageActivity extends AppCompatActivity {
         text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
         TextView userName = new TextView(MessageActivity.this);
-        userName.setText(user.getDisplayName());
+
+        userName.setText(user_message);
         userName.setTypeface(Typeface.DEFAULT_BOLD);
         text.addView(userName);
         TextView textMessage = new TextView(MessageActivity.this);

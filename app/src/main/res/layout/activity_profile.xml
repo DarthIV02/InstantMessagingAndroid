@@ -6,13 +6,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context=".ProfileActivity">
+    tools:context=".profile.ProfileActivity">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/userImage"
+        android:layout_height="200dp"
+        android:layout_width="200dp"
+        app:shapeAppearanceOverlay="@style/roundedImageViewRounded"
+        app:strokeColor="#FFF"
+        app:strokeWidth="0dp"
+        android:src="@drawable/ic_user1"/>
+
+    <Button
+        android:id="@+id/changePictureButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_user1"
+        android:text="Change Profile Picture"
         />
 
 </LinearLayout>

@@ -1,134 +1,95 @@
-package com.example.logintest.ui.login;
+package com.example.logintest.profile;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Bundle;
+
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.logintest.R;
-import com.example.logintest.data.model.RandomColor;
-import com.example.logintest.databinding.ActivityRegisterBinding;
-import com.example.logintest.message.MessageActivity;
-import com.example.logintest.profile.ChangeProfilePictureActivity;
-import com.example.logintest.profile.ProfileActivity;
+import com.example.logintest.data.model.GlideApp;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
-import java.util.Random;
 import java.util.UUID;
 
-public class RegisterActivity extends AppCompatActivity {
-    ActivityRegisterBinding binding;
-    Button RegisterButton;
-    EditText userNameEditText;
-    EditText passwordEditText;
-    EditText confirmPasswordEditText;
-    EditText emailEditText;
+public class ChangeProfilePictureActivity extends AppCompatActivity {
 
-    ImageView userImage;
+    // views for button
+    private Button btnSelect, btnUpload;
 
-    int colorUser;
+    // view for image view
+    private ImageView imageView;
 
-    private final int PICK_IMAGE_REQUEST = 22;
+    // Uri indicates, where the image will be picked from
     private Uri filePath;
 
+    // request code
+    private final int PICK_IMAGE_REQUEST = 22;
+
+    // instance for firebase storage and StorageReference
     FirebaseStorage storage;
     StorageReference storageReference;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        binding = ActivityRegisterBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_change_profile_picture);
 
-        RegisterButton = binding.buttonRegister;
-        userNameEditText = binding.editTextName;
-        passwordEditText = binding.editTextPassword;
-        confirmPasswordEditText = binding.editTextConfirmPassword;
-        emailEditText = binding.editTextEmail;
-        userImage = binding.userImage;
+        ActionBar actionBar;
+        actionBar = getSupportActionBar();
+        ColorDrawable colorDrawable
+                = new ColorDrawable(
+                Color.parseColor("#0F9D58"));
+        actionBar.setBackgroundDrawable(colorDrawable);
 
-        Random rnd = new Random();
-        colorUser = Color.argb(255, rnd.nextInt(256)/2, rnd.nextInt(256)/2, rnd.nextInt(256)/2);
-        userImage.setBackgroundColor(colorUser);
+        // initialise views
+        btnSelect = findViewById(R.id.btnChoose);
+        btnUpload = findViewById(R.id.btnUpload);
+        imageView = findViewById(R.id.imgView);
 
         // get the Firebase  storage reference
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
 
-        RegisterButton.setOnClickListener(new View.OnClickListener() {
+        // on pressing btnSelect SelectImage() is called
+        btnSelect.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                String userName = userNameEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-                String confirmPassword = confirmPasswordEditText.getText().toString();
-                String email = emailEditText.getText().toString();
-                // Check if passwords match
-                if (userName.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || email.isEmpty()) {
-                    Toast.makeText(RegisterActivity.this, "Please fill all the fields", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (password.equals(confirmPassword)) {
-                    FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                            .addOnCompleteListener(task -> {
-                                if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                    Toast.makeText(RegisterActivity.this, "Username already taken", Toast.LENGTH_SHORT).show();
-                                }
-                                if (task.isSuccessful()) {
-                                    // User account created successfully
-                                    String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                                    uploadImage(uid);
-                                    DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
-                                    usersRef.child(uid).child("email").setValue(email);
-                                    usersRef.child(uid).child("username").setValue(userName);
-
-                                    Toast.makeText(RegisterActivity.this, "Register succesfull", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(RegisterActivity.this, "fallooooooo", Toast.LENGTH_SHORT).show();
-                                    if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                        Toast.makeText(RegisterActivity.this, "Username already taken", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                }else{
-                    Toast.makeText(RegisterActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
+            public void onClick(View v)
+            {
+                SelectImage();
             }
         });
 
-        binding.changeProfileImage.setOnClickListener(new View.OnClickListener() {
+        // on pressing btnUpload uploadImage() is called
+        btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                SelectImage();
+            public void onClick(View v)
+            {
+                uploadImage();
             }
         });
     }
 
+    // Select Image method
     private void SelectImage()
     {
 
@@ -174,7 +135,7 @@ public class RegisterActivity extends AppCompatActivity {
                         .getBitmap(
                                 getContentResolver(),
                                 filePath);
-                userImage.setImageBitmap(bitmap);
+                imageView.setImageBitmap(bitmap);
             }
 
             catch (IOException e) {
@@ -184,7 +145,8 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadImage(String uid)
+    // UploadImage method
+    private void uploadImage()
     {
         if (filePath != null) {
 
@@ -198,8 +160,8 @@ public class RegisterActivity extends AppCompatActivity {
             StorageReference ref
                     = storageReference
                     .child(
-                            "usersImages/"
-                                    + uid);
+                            "images/"
+                                    + UUID.randomUUID().toString());
 
             // adding listeners on upload
             // or failure of image
@@ -216,7 +178,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     // Dismiss dialog
                                     progressDialog.dismiss();
                                     Toast
-                                            .makeText(RegisterActivity.this,
+                                            .makeText(ChangeProfilePictureActivity.this,
                                                     "Image Uploaded!!",
                                                     Toast.LENGTH_SHORT)
                                             .show();
@@ -231,7 +193,7 @@ public class RegisterActivity extends AppCompatActivity {
                             // Error, Image not uploaded
                             progressDialog.dismiss();
                             Toast
-                                    .makeText(RegisterActivity.this,
+                                    .makeText(ChangeProfilePictureActivity.this,
                                             "Failed " + e.getMessage(),
                                             Toast.LENGTH_SHORT)
                                     .show();

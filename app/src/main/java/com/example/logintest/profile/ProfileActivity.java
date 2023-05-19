@@ -1,22 +1,17 @@
-package com.example.logintest;
+package com.example.logintest.profile;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
-import android.os.Bundle;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.Registry;
-import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.module.AppGlideModule;
 import com.example.logintest.data.model.GlideApp;
 import com.example.logintest.databinding.ActivityProfileBinding;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.example.logintest.message.MessageActivity;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import java.io.InputStream;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -39,5 +34,13 @@ public class ProfileActivity extends AppCompatActivity {
                 .load(conic)
                 .into(userImageView);
 
+        binding.changePictureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, ChangeProfilePictureActivity.class);
+                //intent.putExtra("userName", current_user);
+                startActivity(intent);
+            }
+        });
     }
 }
