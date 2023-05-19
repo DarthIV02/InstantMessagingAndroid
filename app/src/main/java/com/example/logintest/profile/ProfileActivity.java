@@ -13,6 +13,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.logintest.data.model.GlideApp;
 import com.example.logintest.databinding.ActivityProfileBinding;
 import com.example.logintest.message.MessageActivity;
@@ -59,6 +62,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         GlideApp.with(this /* context */)
                 .load(conic)
+                .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(70)))
                 .into(userImageView);
 
         binding.saveButton.setOnClickListener(new View.OnClickListener() {

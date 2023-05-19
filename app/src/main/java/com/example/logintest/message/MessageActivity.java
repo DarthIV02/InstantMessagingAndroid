@@ -17,12 +17,16 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.logintest.data.model.GlideApp;
 import com.example.logintest.profile.ProfileActivity;
 import com.example.logintest.R;
 import com.example.logintest.data.model.TextMessage;
 import com.example.logintest.data.model.User;
 import com.example.logintest.databinding.ActivityMessageBinding;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -208,15 +212,18 @@ public class MessageActivity extends AppCompatActivity {
         box.setOrientation(LinearLayout.HORIZONTAL);
         box.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
 
-        ImageView userImage = new ImageView(MessageActivity.this);
+        //ImageView userImage = new ImageView(MessageActivity.this);
+        ImageView userImage = new ShapeableImageView(MessageActivity.this);
         userImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
-        userImage.getLayoutParams().height = (int) (50 * scale + 0.5f);
-        userImage.getLayoutParams().width = (int) (50 * scale + 0.5f);
+        userImage.getLayoutParams().height = (int) (60 * scale + 0.5f);
+        userImage.getLayoutParams().width = (int) (60 * scale + 0.5f);
+        userImage.setPadding(0,0,0,(int) (3 * scale + 0.5f));
 
         StorageReference userImageStorage = storageRef.child("usersImages").child(uid);
 
         GlideApp.with(MessageActivity.this /* context */)
                 .load(userImageStorage)
+                .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(90)))
                 .into(userImage);
         box.addView(userImage);
 
