@@ -4,9 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -16,16 +20,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.logintest.data.model.GlideApp;
+import com.example.logintest.data.model.ImageMessage;
+import com.example.logintest.data.model.Message;
 import com.example.logintest.profile.ProfileActivity;
 import com.example.logintest.R;
 import com.example.logintest.data.model.TextMessage;
 import com.example.logintest.data.model.User;
 import com.example.logintest.databinding.ActivityMessageBinding;
+import com.example.logintest.ui.login.RegisterActivity;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.ChildEventListener;
@@ -36,11 +46,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.UUID;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -71,6 +85,10 @@ public class MessageActivity extends AppCompatActivity {
     private Menu menu;
 
     String user_message;
+
+    private final int PICK_IMAGE_REQUEST = 22;
+
+    private Uri filePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,6 +148,13 @@ public class MessageActivity extends AppCompatActivity {
                 binding.inputEditText.setText(""); // Set input to nothing
             }
         });
+
+        binding.addImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                upload_Image();
+            }
+        });
     }
 
     @Override
@@ -162,14 +187,27 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 Map<String,Object> map = (Map<String,Object>) snapshot.getValue();
-                TextMessage newMessage = new TextMessage(String.valueOf(map.get("userName")), String.valueOf(map.get("userId")),
-                        String.valueOf(map.get("text")), String.valueOf(map.get("date")));
 
-                binding.linearLayoutFull.addView(createNewMessageDisplay(
-                        newMessage.getUserName(),
-                        newMessage.getUserId(),
-                        newMessage.getText())
-                );
+                if(map.get("text") == null){
+                     ImageMessage newMessage = new ImageMessage(String.valueOf(map.get("userName")), String.valueOf(map.get("userId")),
+                             String.valueOf(map.get("imageUID")), String.valueOf(map.get("date")));
+
+                    binding.linearLayoutFull.addView(createNewImageDisplay(
+                            newMessage.getUserName(),
+                            newMessage.getUserId(),
+                            newMessage.getImageUID())
+                    );
+
+                } else {
+                     TextMessage newMessage = new TextMessage(String.valueOf(map.get("userName")), String.valueOf(map.get("userId")),
+                            String.valueOf(map.get("text")), String.valueOf(map.get("date")));
+
+                    binding.linearLayoutFull.addView(createNewMessageDisplay(
+                            newMessage.getUserName(),
+                            newMessage.getUserId(),
+                            newMessage.getText())
+                    );
+                }
 
                 ScrollView scrollview = ((ScrollView) binding.scrollView); // Go to bottom for
                                                                            // every new message
@@ -244,5 +282,175 @@ public class MessageActivity extends AppCompatActivity {
         box.addView(text);
 
         return box;
+    }
+
+    public LinearLayout createNewImageDisplay(String user_name, String uid, String imageUID){
+
+        LinearLayout box = new LinearLayout(MessageActivity.this);
+        box.setOrientation(LinearLayout.HORIZONTAL);
+        box.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+
+        //ImageView userImage = new ImageView(MessageActivity.this);
+        ImageView userImage = new ShapeableImageView(MessageActivity.this);
+        userImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
+        userImage.getLayoutParams().height = (int) (60 * scale + 0.5f);
+        userImage.getLayoutParams().width = (int) (60 * scale + 0.5f);
+        userImage.setPadding(0,0,0,(int) (3 * scale + 0.5f));
+
+        StorageReference userImageStorage = storageRef.child("usersImages").child(uid);
+
+        GlideApp.with(MessageActivity.this /* context */)
+                .load(userImageStorage)
+                .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(90)))
+                .into(userImage);
+        box.addView(userImage);
+
+        LinearLayout text = new LinearLayout(MessageActivity.this);
+        text.setOrientation(LinearLayout.VERTICAL);
+        text.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        text.setPadding((int) (10 * scale + 0.5f), 0, 0, 0);
+
+        TextView userName = new TextView(MessageActivity.this);
+
+        userName.setText(user_name);
+        userName.setTypeface(Typeface.DEFAULT_BOLD);
+        text.addView(userName);
+
+        ImageView image = new ImageView(MessageActivity.this);
+        StorageReference imageStorage = storageRef.child("images").child(imageUID);
+
+        GlideApp.with(MessageActivity.this /* context */)
+                .load(imageStorage)
+                .into(image);
+        text.addView(image);
+
+        box.addView(text);
+
+        return box;
+    }
+
+    public void upload_Image(){
+        // Defining Implicit Intent to mobile gallery
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(
+                Intent.createChooser(
+                        intent,
+                        "Select Image from here..."),
+                PICK_IMAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode,
+                                    int resultCode,
+                                    Intent data)
+    {
+
+        super.onActivityResult(requestCode,
+                resultCode,
+                data);
+
+        // checking request code and result code
+        // if request code is PICK_IMAGE_REQUEST and
+        // resultCode is RESULT_OK
+        // then set image in the image view
+        if (requestCode == PICK_IMAGE_REQUEST
+                && resultCode == RESULT_OK
+                && data != null
+                && data.getData() != null) {
+
+            // Get the Uri of data
+            filePath = data.getData();
+            try {
+
+                // Code for showing progressDialog while uploading
+                ProgressDialog progressDialog
+                        = new ProgressDialog(this);
+                progressDialog.setTitle("Uploading...");
+                progressDialog.show();
+
+                // Defining the child of storageReference
+
+                String uid = UUID.randomUUID().toString();
+
+                StorageReference ref
+                        = storageRef
+                        .child(
+                                "images/"
+                                        + uid);
+
+                // adding listeners on upload
+                // or failure of image
+                ref.putFile(filePath)
+                        .addOnSuccessListener(
+                                new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+                                    @Override
+                                    public void onSuccess(
+                                            UploadTask.TaskSnapshot taskSnapshot)
+                                    {
+
+                                        // Image uploaded successfully
+                                        // Dismiss dialog
+                                        progressDialog.dismiss();
+                                        Toast
+                                                .makeText(MessageActivity.this,
+                                                        "Image Uploaded!!",
+                                                        Toast.LENGTH_SHORT)
+                                                .show();
+
+                                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                                            calendar = Calendar.getInstance();
+                                            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                            date = dateFormat.format(calendar.getTime());
+                                            ImageMessage message = new ImageMessage(current_user, current_id,
+                                                    uid,
+                                                    String.valueOf(date));
+                                            String messageId = "m" + date;
+                                            databaseReference.child("messages").child(messageId).setValue(message);
+                                        }
+                                    }
+                                })
+
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e)
+                            {
+
+                                // Error, Image not uploaded
+                                progressDialog.dismiss();
+                                Toast
+                                        .makeText(MessageActivity.this,
+                                                "Failed " + e.getMessage(),
+                                                Toast.LENGTH_SHORT)
+                                        .show();
+                            }
+                        })
+                        .addOnProgressListener(
+                                new OnProgressListener<UploadTask.TaskSnapshot>() {
+
+                                    // Progress Listener for loading
+                                    // percentage on the dialog box
+                                    @Override
+                                    public void onProgress(
+                                            UploadTask.TaskSnapshot taskSnapshot)
+                                    {
+                                        double progress
+                                                = (100.0
+                                                * taskSnapshot.getBytesTransferred()
+                                                / taskSnapshot.getTotalByteCount());
+                                        progressDialog.setMessage(
+                                                "Uploaded "
+                                                        + (int)progress + "%");
+                                    }
+                                });
+            }
+
+            catch (Exception e) {
+                // Log the exception
+                e.printStackTrace();
+            }
+        }
     }
 }
