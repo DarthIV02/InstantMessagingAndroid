@@ -189,8 +189,9 @@ public class MessageActivity extends AppCompatActivity {
                 Map<String,Object> map = (Map<String,Object>) snapshot.getValue();
 
                 if(map.get("text") == null){
-                     ImageMessage newMessage = new ImageMessage(String.valueOf(map.get("userName")), String.valueOf(map.get("userId")),
-                             String.valueOf(map.get("imageUID")), String.valueOf(map.get("date")));
+                     ImageMessage newMessage = new ImageMessage(String.valueOf(map.get("userName")),
+                             String.valueOf(map.get("userId")), String.valueOf(map.get("imageUID")),
+                             String.valueOf(map.get("date")));
 
                     binding.linearLayoutFull.addView(createNewImageDisplay(
                             newMessage.getUserName(),
@@ -199,8 +200,9 @@ public class MessageActivity extends AppCompatActivity {
                     );
 
                 } else {
-                     TextMessage newMessage = new TextMessage(String.valueOf(map.get("userName")), String.valueOf(map.get("userId")),
-                            String.valueOf(map.get("text")), String.valueOf(map.get("date")));
+                     TextMessage newMessage = new TextMessage(String.valueOf(map.get("userName")),
+                             String.valueOf(map.get("userId")), String.valueOf(map.get("text")),
+                             String.valueOf(map.get("date")));
 
                     binding.linearLayoutFull.addView(createNewMessageDisplay(
                             newMessage.getUserName(),
