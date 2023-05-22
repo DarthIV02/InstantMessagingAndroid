@@ -17,6 +17,7 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -35,10 +36,14 @@ import com.example.logintest.data.model.TextMessage;
 import com.example.logintest.data.model.User;
 import com.example.logintest.databinding.ActivityMessageBinding;
 import com.example.logintest.ui.login.RegisterActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -343,20 +348,6 @@ public class MessageActivity extends AppCompatActivity {
                         "Select Image from here..."),
                 PICK_IMAGE_REQUEST);
     }
-
-
-    @Override
-    public void onBackPressed() {
-        // Verificar si la actividad actual es la que deseas controlar
-        if (this.getClass() == MessageActivity.class) {
-            // Llama a finish() para finalizar la actividad actual
-            finish();
-        } else {
-            // Deja que se ejecute el comportamiento predeterminado del botón de retroceso
-            super.onBackPressed();
-        }
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode,
