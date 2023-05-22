@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.logintest.databinding.ActivityRegisterBinding;
+import com.example.logintest.message.MessageActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -105,7 +106,12 @@ public class RegisterActivity extends AppCompatActivity {
                                     usersRef.child(uid).child("email").setValue(email);
                                     usersRef.child(uid).child("username").setValue(userName);
 
+
                                     Toast.makeText(RegisterActivity.this, "Register succesfull", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(RegisterActivity.this, MessageActivity.class);
+                                        intent.putExtra("username", userName);
+                                        intent.putExtra("uid", uid);
+                                        startActivity(intent);
                                 } else {
                                     Toast.makeText(RegisterActivity.this, "fallooooooo", Toast.LENGTH_SHORT).show();
                                     if (task.getException() instanceof FirebaseAuthUserCollisionException) {
@@ -220,6 +226,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                     "Image Uploaded!!",
                                                     Toast.LENGTH_SHORT)
                                             .show();
+                                    finishAffinity();
                                 }
                             })
 

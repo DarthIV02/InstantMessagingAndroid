@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -99,8 +100,8 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        current_id = "RXSRUR0kLSONfAlW3hGrmeh7YEq1";
-        current_user = intent.getStringExtra("userName");
+        current_id = intent.getStringExtra("uid");
+        current_user = intent.getStringExtra("username");
 
         // MESSAGES ADDED WITH FIREBASE START
 
@@ -342,6 +343,20 @@ public class MessageActivity extends AppCompatActivity {
                         "Select Image from here..."),
                 PICK_IMAGE_REQUEST);
     }
+
+
+    @Override
+    public void onBackPressed() {
+        // Verificar si la actividad actual es la que deseas controlar
+        if (this.getClass() == MessageActivity.class) {
+            // Llama a finish() para finalizar la actividad actual
+            finish();
+        } else {
+            // Deja que se ejecute el comportamiento predeterminado del botón de retroceso
+            super.onBackPressed();
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode,
