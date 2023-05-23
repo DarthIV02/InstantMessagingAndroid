@@ -21,6 +21,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.logintest.data.model.GlideApp;
 import com.example.logintest.databinding.ActivityProfileBinding;
 import com.example.logintest.message.MessageActivity;
+import com.example.logintest.ui.login.LoadingActivity;
 import com.example.logintest.ui.login.LoginActivity;
 import com.example.logintest.ui.login.RegisterActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -73,14 +74,6 @@ public class ProfileActivity extends AppCompatActivity {
                 .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(70)))
                 .into(userImageView);
 
-        binding.saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-
-
-        });
         binding.deleteButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showDeleteConfirmationDialog();
@@ -107,14 +100,18 @@ public class ProfileActivity extends AppCompatActivity {
         private void deleteCurrentUser() {
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (currentUser != null) {
+                    //DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+                    //usersRef.child(currentUser.getUid()).removeValue();
+                    //storageRef.child("usersImages").child(currentUser.getUid()).delete();
                     currentUser.delete()
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         // El usuario se eliminó exitosamente
                                         Toast.makeText(ProfileActivity.this, "Usuario eliminado", Toast.LENGTH_SHORT).show();
                                         // Realiza cualquier acción adicional que necesites después de eliminar el usuario
+
                                         Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
                                         startActivity(intent);
                                     } else {

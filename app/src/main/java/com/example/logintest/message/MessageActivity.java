@@ -1,9 +1,13 @@
 package com.example.logintest.message;
 
+import static com.google.android.material.internal.ContextUtils.getActivity;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,9 +18,11 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -137,6 +143,7 @@ public class MessageActivity extends AppCompatActivity {
         });
 
         binding.sendButton.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("RestrictedApi")
             @Override
             public void onClick(View v) {
 
@@ -152,6 +159,7 @@ public class MessageActivity extends AppCompatActivity {
                 }
 
                 binding.inputEditText.setText(""); // Set input to nothing
+                hideKeyboard(MessageActivity.this);
             }
         });
 
@@ -161,6 +169,17 @@ public class MessageActivity extends AppCompatActivity {
                 upload_Image();
             }
         });
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override
@@ -225,6 +244,10 @@ public class MessageActivity extends AppCompatActivity {
                         scrollview.fullScroll(ScrollView.FOCUS_DOWN);
                     }
                 });
+
+                //scrollview.scrollTo (0, Integer.MAX_VALUE);
+
+
             }
 
             @Override
@@ -267,7 +290,7 @@ public class MessageActivity extends AppCompatActivity {
 
         StorageReference userImageStorage = storageRef.child("usersImages").child(uid);
 
-        GlideApp.with(MessageActivity.this /* context */)
+        GlideApp.with(getApplicationContext() /* context */)
                 .load(userImageStorage)
                 .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(90)))
                 .into(userImage);
@@ -298,7 +321,7 @@ public class MessageActivity extends AppCompatActivity {
         box.setOrientation(LinearLayout.HORIZONTAL);
         box.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
 
-        //ImageView userImage = new ImageView(MessageActivity.this);
+
         ImageView userImage = new ShapeableImageView(MessageActivity.this);
         userImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
         userImage.getLayoutParams().height = (int) (60 * scale + 0.5f);
@@ -307,7 +330,7 @@ public class MessageActivity extends AppCompatActivity {
 
         StorageReference userImageStorage = storageRef.child("usersImages").child(uid);
 
-        GlideApp.with(MessageActivity.this /* context */)
+        GlideApp.with(getApplicationContext() /* context */)
                 .load(userImageStorage)
                 .apply(new RequestOptions().transforms(new CenterCrop(), new RoundedCorners(90)))
                 .into(userImage);
@@ -326,11 +349,20 @@ public class MessageActivity extends AppCompatActivity {
 
         ImageView image = new ImageView(MessageActivity.this);
         StorageReference imageStorage = storageRef.child("images").child(imageUID);
-
-        GlideApp.with(MessageActivity.this /* context */)
-                .load(imageStorage)
-                .into(image);
-        text.addView(image);
+        imageStorage.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                GlideApp.with(getApplicationContext() /* context */)
+                        .load(imageStorage)
+                        .into(image);
+                text.addView(image);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.v(TAG, e.getMessage());
+            }
+        });
 
         box.addView(text);
 

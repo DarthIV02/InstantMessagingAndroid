@@ -96,26 +96,27 @@ public class RegisterActivity extends AppCompatActivity {
                     FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener(task -> {
                                 if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                    Toast.makeText(RegisterActivity.this, "Username already taken", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivity.this, "Email already taken", Toast.LENGTH_SHORT).show();
                                 }
                                 if (task.isSuccessful()) {
                                     // User account created successfully
                                     String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                                    uploadImage(uid);
                                     DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
                                     usersRef.child(uid).child("email").setValue(email);
                                     usersRef.child(uid).child("username").setValue(userName);
 
 
                                     Toast.makeText(RegisterActivity.this, "Register succesfull", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(RegisterActivity.this, MessageActivity.class);
+                                    uploadImage(uid, userName);
+                                    /*Intent intent = new Intent(RegisterActivity.this, LoadingActivity.class);
                                         intent.putExtra("username", userName);
                                         intent.putExtra("uid", uid);
-                                        startActivity(intent);
+                                        intent.putExtra("LOGIN", true);
+                                        startActivity(intent);*/
                                 } else {
-                                    Toast.makeText(RegisterActivity.this, "fallooooooo", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(RegisterActivity.this, String.valueOf(task.getException().getMessage()), Toast.LENGTH_SHORT).show();
                                     if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                        Toast.makeText(RegisterActivity.this, "Username already taken", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(RegisterActivity.this, "Email already taken", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -190,7 +191,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadImage(String uid)
+    private void uploadImage(String uid, String userName)
     {
         if (filePath != null) {
 
@@ -227,6 +228,11 @@ public class RegisterActivity extends AppCompatActivity {
                                                     Toast.LENGTH_SHORT)
                                             .show();
                                     finishAffinity();
+                                    Intent intent = new Intent(RegisterActivity.this, MessageActivity.class);
+                                    intent.putExtra("username", userName);
+                                    intent.putExtra("uid", uid);
+                                    //intent.putExtra("LOGIN", true);
+                                    startActivity(intent);
                                 }
                             })
 

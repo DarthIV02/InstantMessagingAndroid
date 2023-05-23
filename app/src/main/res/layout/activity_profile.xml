@@ -14,10 +14,10 @@
         android:src="@drawable/ic_user1"/>
 
     <Button
-        android:id="@+id/saveButton"
+        android:id="@+id/logOutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save Changes" />
+        android:text="Log Out" />
 
     <Button
         android:id="@+id/deleteButton"
