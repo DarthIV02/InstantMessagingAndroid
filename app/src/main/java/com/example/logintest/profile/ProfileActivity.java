@@ -126,6 +126,14 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             }
         });
+
+        binding.logOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
 //        binding.changePasswordButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {

@@ -5,6 +5,7 @@ import static com.google.android.material.internal.ContextUtils.getActivity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -142,6 +143,15 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+        androidx.core.widget.NestedScrollView scrollview = ((androidx.core.widget.NestedScrollView) binding.scrollView); // Go to bottom for
+        // every new message
+        scrollview.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollview.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
+
         binding.sendButton.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("RestrictedApi")
             @Override
@@ -236,7 +246,7 @@ public class MessageActivity extends AppCompatActivity {
                     );
                 }
 
-                ScrollView scrollview = ((ScrollView) binding.scrollView); // Go to bottom for
+                androidx.core.widget.NestedScrollView scrollview = ((androidx.core.widget.NestedScrollView) binding.scrollView); // Go to bottom for
                                                                            // every new message
                 scrollview.post(new Runnable() {
                     @Override
@@ -244,10 +254,6 @@ public class MessageActivity extends AppCompatActivity {
                         scrollview.fullScroll(ScrollView.FOCUS_DOWN);
                     }
                 });
-
-                //scrollview.scrollTo (0, Integer.MAX_VALUE);
-
-
             }
 
             @Override
