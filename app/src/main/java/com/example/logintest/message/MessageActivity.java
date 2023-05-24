@@ -94,6 +94,7 @@ public class MessageActivity extends AppCompatActivity {
 
     String current_user;
     String current_id;
+    String current_email;
 
     private Menu menu;
 
@@ -114,6 +115,7 @@ public class MessageActivity extends AppCompatActivity {
 
         current_id = intent.getStringExtra("uid");
         current_user = intent.getStringExtra("username");
+        current_email = intent.getStringExtra("email");
 
         // MESSAGES ADDED WITH FIREBASE START
 
@@ -208,6 +210,8 @@ public class MessageActivity extends AppCompatActivity {
         if(id == R.id.profile){
             Intent intent = new Intent(MessageActivity.this, ProfileActivity.class);
             intent.putExtra("USERID", current_id);
+            intent.putExtra("userName", current_user);
+            intent.putExtra("email", current_email);
             startActivity(intent);
         }
 

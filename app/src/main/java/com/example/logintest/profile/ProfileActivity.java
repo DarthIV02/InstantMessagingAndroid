@@ -1,5 +1,6 @@
 package com.example.logintest.profile;
 
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -10,16 +11,21 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.logintest.R;
 import com.example.logintest.data.model.GlideApp;
 import com.example.logintest.databinding.ActivityProfileBinding;
+import com.example.logintest.fragments.ChangePasswordActivity;
 import com.example.logintest.message.MessageActivity;
 import com.example.logintest.ui.login.LoadingActivity;
 import com.example.logintest.ui.login.LoginActivity;
@@ -47,11 +53,21 @@ public class ProfileActivity extends AppCompatActivity {
 
     String current_id;
 
+    String current_user;
+    String current_email;
+    TextView userNameTextView;
+    TextView emailTextView;
+
+
+
     private final int PICK_IMAGE_REQUEST = 22;
 
     private Uri filePath;
 
     StorageReference storageRef;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,12 +76,23 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         userImageView = binding.userImage;
+        userNameTextView = binding.usernameTextview;
+        emailTextView = binding.emailTextview;
+        LinearLayout container = findViewById(R.id.conatiner);
+
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReference();
 
         Intent intent = getIntent();
         current_id = intent.getStringExtra("USERID");
+        current_user =  intent.getStringExtra("userName");
+        current_email = intent.getStringExtra("email");
+
+        userNameTextView.setText("Username: "+ current_user);
+        emailTextView.setText("Email: "+ current_email);
+
+
 
         StorageReference conic = storageRef.child("usersImages").child(current_id);
 
@@ -132,14 +159,20 @@ public class ProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
-//        binding.changePasswordButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                showChangePasswordDialog();
-//            }
-//
-//        });
-   }
+        binding.changePasswordButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Crear una instancia del Fragment
+                ChangePasswordActivity fragment = new ChangePasswordActivity();
+
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(container.getId(), fragment)
+                        .commit();
+            }
+        });
+    }
 }
