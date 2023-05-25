@@ -107,7 +107,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
                                     Toast.makeText(RegisterActivity.this, "Register succesfull", Toast.LENGTH_SHORT).show();
-                                    uploadImage(uid, userName);
+                                    uploadImage(uid, userName, email);
                                     /*Intent intent = new Intent(RegisterActivity.this, LoadingActivity.class);
                                         intent.putExtra("username", userName);
                                         intent.putExtra("uid", uid);
@@ -191,7 +191,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadImage(String uid, String userName)
+    private void uploadImage(String uid, String userName, String email)
     {
         if (filePath != null) {
 
@@ -231,6 +231,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     Intent intent = new Intent(RegisterActivity.this, MessageActivity.class);
                                     intent.putExtra("username", userName);
                                     intent.putExtra("uid", uid);
+                                    intent.putExtra("email", email);
                                     //intent.putExtra("LOGIN", true);
                                     startActivity(intent);
                                 }
