@@ -166,7 +166,7 @@ public class MessageActivity extends AppCompatActivity {
                     TextMessage message = new TextMessage(current_user, current_id,
                             String.valueOf(binding.inputEditText.getText()),
                             String.valueOf(date));
-                    String messageId = "m" + date;
+                    String messageId = "m" + date + UUID.randomUUID().toString();
                     databaseReference.child("messages").child(messageId).setValue(message);
                 }
 
@@ -457,7 +457,7 @@ public class MessageActivity extends AppCompatActivity {
                                             ImageMessage message = new ImageMessage(current_user, current_id,
                                                     uid,
                                                     String.valueOf(date));
-                                            String messageId = "m" + date;
+                                            String messageId = "m" + date + UUID.randomUUID().toString();
                                             databaseReference.child("messages").child(messageId).setValue(message);
                                         }
                                     }
