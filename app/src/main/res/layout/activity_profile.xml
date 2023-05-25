@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@drawable/marcocircular"
+    tools:context=".profile.ProfileActivity"
+    android:id="@+id/conatiner">
+
+    <ImageView
+        android:id="@+id/userImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/ic_user1"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/circular_image_border"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/usernameTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"
+        android:textAlignment="center"
+        android:fontFamily="sans-serif-medium" />
+
+    <TextView
+        android:id="@+id/emailTextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:layout_marginBottom="8dp"
+        android:textAlignment="center"
+        android:fontFamily="sans-serif" />
+
+    <Button
+        android:id="@+id/logOutButton"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Log Out"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/rounded_button"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="sans-serif-medium" />
+
+    <Button
+        android:id="@+id/changePasswordButton"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Change Password"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/rounded_button"
+        android:fontFamily="sans-serif-medium"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Delete User"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/rounded_button"
+        android:fontFamily="sans-serif-medium" />
+
+
+</LinearLayout>

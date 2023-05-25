@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/RelativeLayoutComplete"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:padding="3dp">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:focusableInTouchMode="true"
+        android:scrollbars="none"
+        android:layout_above="@id/RelativeLayoutBottom">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/linearLayoutFull"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.core.widget.NestedScrollView>
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayoutBottom"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/addImageButton"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:enabled="true"
+            app:icon="@drawable/ic_add_image"
+            app:iconTint="#FFFFFF" />
+
+        <EditText
+            android:id="@+id/inputEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Send Message"
+            android:layout_toLeftOf="@id/sendButton"
+            android:layout_toRightOf="@id/addImageButton"
+            android:inputType="textPersonName"
+            android:background="@drawable/edit_text_background"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:padding="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
+
+        <Button
+            android:id="@+id/sendButton"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            app:icon="@drawable/ic_send"
+            android:enabled="false"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
